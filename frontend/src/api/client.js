@@ -1,0 +1,78 @@
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
+function getToken() {
+  return localStorage.getItem('token');
+}
+
+async function request(path, options = {}) {
+  const token = getToken();
+  const headers = { 'Content-Type': 'application/json', ...options.headers };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw { status: res.status, ...data };
+  return data;
+}
+
+export const api = {
+  // Auth
+  register: (email, password) =>
+    request('/api/auth/register', { method: 'POST', body: JSON.stringify({ email, password }) }),
+  login: (email, password) =>
+    request('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+  getProfile: () => request('/api/auth/profile'),
+
+  // Jobs
+  scrapeJobs: (query, location, source = 'indeed', maxResults = 20) =>
+    request('/api/jobs/scrape', {
+      method: 'POST',
+      body: JSON.stringify({ query, location, source, max_results: maxResults }),
+    }),
+  listJobs: () => request('/api/jobs'),
+  saveJob: (job) =>
+    request('/api/jobs', { method: 'POST', body: JSON.stringify(job) }),
+  matchJob: (resume, jobDescription, jobId) =>
+    request('/api/jobs/match', {
+      method: 'POST',
+      body: JSON.stringify({ resume, job_description: jobDescription, job_id: jobId }),
+    }),
+
+  // Resumes
+  optimizeResume: (resume, jobDescription, jobId) =>
+    request('/api/resumes/optimize', {
+      method: 'POST',
+      body: JSON.stringify({ resume, job_description: jobDescription, job_id: jobId }),
+    }),
+
+  // Interview
+  generateQuestions: (jobDescription, jobId, numQuestions = 5) =>
+    request('/api/interview/generate', {
+      method: 'POST',
+      body: JSON.stringify({ job_description: jobDescription, job_id: jobId, num_questions: numQuestions }),
+    }),
+  evaluateAnswer: (interviewId, answer) =>
+    request('/api/interview/evaluate', {
+      method: 'POST',
+      body: JSON.stringify({ interview_id: interviewId, answer }),
+    }),
+  getInterviewHistory: (jobId) =>
+    request(`/api/interview/history${jobId ? `?job_id=${jobId}` : ''}`),
+
+  // Applications
+  createApplication: (jobId, matchScore, notes, resumeId) =>
+    request('/api/applications', {
+      method: 'POST',
+      body: JSON.stringify({ job_id: jobId, match_score: matchScore, notes, resume_id: resumeId }),
+    }),
+  listApplications: (status) =>
+    request(`/api/applications${status ? `?status=${status}` : ''}`),
+  updateApplication: (appId, updates) =>
+    request(`/api/applications/${appId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    }),
+
+  // Dashboard
+  getDashboard: () => request('/api/dashboard'),
+};
