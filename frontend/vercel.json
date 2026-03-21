@@ -4,7 +4,7 @@
   "installCommand": "npm install",
   "framework": "vite",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://your-backend-url.com/api/$1" },
+    { "source": "/api/(.*)", "destination": "https://job-search-ai-backend-141172818759.us-central1.run.app/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
