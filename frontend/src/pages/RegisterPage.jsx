@@ -8,7 +8,8 @@ export default function RegisterPage() {
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { register, login } = useAuth();
+  const [verificationSent, setVerificationSent] = useState(false);
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -21,14 +22,32 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register(email, password);
-      await login(email, password);
-      navigate('/dashboard');
+      setVerificationSent(true);
+      // Navigate to dashboard after a short delay so user sees the message
+      setTimeout(() => navigate('/dashboard'), 2000);
     } catch (err) {
-      setError(err.error || 'Registration failed');
+      setError(err.message || err.error || 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
+
+  if (verificationSent) {
+    return (
+      <div className="auth-page">
+        <div className="auth-card">
+          <h1>Verify Your Email</h1>
+          <p className="auth-subtitle">
+            A verification email has been sent to <strong>{email}</strong>.
+            Please check your inbox and click the link to verify your account.
+          </p>
+          <p className="auth-footer">
+            You'll be redirected to the dashboard shortly.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-page">

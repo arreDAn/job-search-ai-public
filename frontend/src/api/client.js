@@ -1,11 +1,15 @@
+import { auth } from '../firebase';
+
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
-function getToken() {
-  return localStorage.getItem('token');
+async function getToken() {
+  const user = auth.currentUser;
+  if (!user) return null;
+  return user.getIdToken();
 }
 
 async function request(path, options = {}) {
-  const token = getToken();
+  const token = await getToken();
   const headers = { 'Content-Type': 'application/json', ...options.headers };
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
@@ -16,11 +20,11 @@ async function request(path, options = {}) {
 }
 
 export const api = {
-  // Auth
-  register: (email, password) =>
-    request('/api/auth/register', { method: 'POST', body: JSON.stringify({ email, password }) }),
-  login: (email, password) =>
-    request('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+  // Auth — Firebase handles credentials; these sync with the backend
+  register: () =>
+    request('/api/auth/register', { method: 'POST', body: JSON.stringify({}) }),
+  login: () =>
+    request('/api/auth/login', { method: 'POST', body: JSON.stringify({}) }),
   getProfile: () => request('/api/auth/profile'),
 
   // Jobs

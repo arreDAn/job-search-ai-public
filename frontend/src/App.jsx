@@ -8,6 +8,7 @@ import ServicesPage from './pages/ServicesPage';
 import FutureServicesPage from './pages/FutureServicesPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import JobsPage from './pages/JobsPage';
 import ResumePage from './pages/ResumePage';
@@ -35,6 +36,7 @@ function AppShell() {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
             <Route path="/jobs" element={<ProtectedRoute><JobsPage /></ProtectedRoute>} />
             <Route path="/resume" element={<ProtectedRoute><ResumePage /></ProtectedRoute>} />
