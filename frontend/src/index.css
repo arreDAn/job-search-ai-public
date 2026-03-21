@@ -468,6 +468,11 @@ tr:last-child td { border-bottom: none; }
   color: rgba(255, 255, 255, 0.7);
 }
 .btn-landing-ghost:hover { color: #fff; }
+.nav-user-email {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+}
 .btn-landing-sm { padding: 0.5rem 1.1rem; font-size: 0.85rem; }
 .btn-landing-lg { padding: 0.85rem 2rem; font-size: 1rem; }
 

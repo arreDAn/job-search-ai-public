@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
-import LandingNavbar from './components/LandingNavbar';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import ServicesPage from './pages/ServicesPage';
@@ -23,7 +22,7 @@ function AppShell() {
 
   return (
     <>
-      {isLanding ? <LandingNavbar /> : <Navbar />}
+      <Navbar />
       {isLanding ? (
         <Routes>
           <Route path="/" element={<HomePage />} />
