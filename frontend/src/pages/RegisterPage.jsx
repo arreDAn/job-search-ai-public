@@ -23,8 +23,6 @@ export default function RegisterPage() {
     try {
       await register(email, password);
       setVerificationSent(true);
-      // Navigate to dashboard after a short delay so user sees the message
-      setTimeout(() => navigate('/dashboard'), 2000);
     } catch (err) {
       setError(err.message || err.error || 'Registration failed');
     } finally {
@@ -41,9 +39,9 @@ export default function RegisterPage() {
             A verification email has been sent to <strong>{email}</strong>.
             Please check your inbox and click the link to verify your account.
           </p>
-          <p className="auth-footer">
-            You'll be redirected to the dashboard shortly.
-          </p>
+          <Link to="/login" className="btn btn-primary btn-block" style={{ textAlign: 'center', marginTop: '1rem' }}>
+            Go to Login
+          </Link>
         </div>
       </div>
     );
