@@ -1,6 +1,14 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
+
+const PASSWORD_RULES = [
+  { label: 'At least 8 characters', test: (p) => p.length >= 8 },
+  { label: 'Uppercase letter', test: (p) => /[A-Z]/.test(p) },
+  { label: 'Lowercase letter', test: (p) => /[a-z]/.test(p) },
+  { label: 'Number', test: (p) => /\d/.test(p) },
+  { label: 'Special character (!@#$…)', test: (p) => /[^A-Za-z0-9]/.test(p) },
+];
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -12,9 +20,16 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  const ruleResults = useMemo(() => PASSWORD_RULES.map((r) => ({ ...r, passed: r.test(password) })), [password]);
+  const allPassed = ruleResults.every((r) => r.passed);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (!allPassed) {
+      setError('Password does not meet the requirements');
+      return;
+    }
     if (password !== confirm) {
       setError('Passwords do not match');
       return;
@@ -72,10 +87,19 @@ export default function RegisterPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Min 6 characters"
+              placeholder="Strong password"
               required
-              minLength={6}
+              minLength={8}
             />
+            {password && (
+              <ul className="password-rules">
+                {ruleResults.map((r, i) => (
+                  <li key={i} className={r.passed ? 'rule-pass' : 'rule-fail'}>
+                    {r.passed ? '✓' : '✗'} {r.label}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <div className="form-group">
             <label htmlFor="confirm">Confirm Password</label>
@@ -86,10 +110,10 @@ export default function RegisterPage() {
               onChange={(e) => setConfirm(e.target.value)}
               placeholder="Repeat password"
               required
-              minLength={6}
+              minLength={8}
             />
           </div>
-          <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
+          <button type="submit" className="btn btn-primary btn-block" disabled={loading || !allPassed}>
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
         </form>
