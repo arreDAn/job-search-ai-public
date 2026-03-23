@@ -1,6 +1,16 @@
 import { auth } from '../firebase';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
+const RECAPTCHA_SITE_KEY = '6LdiF5UsAAAAAEY7nqA-iKZ3gU6MnyEM9dvl6gMb';
+
+async function getRecaptchaToken(action) {
+  try {
+    await new Promise((resolve) => window.grecaptcha.ready(resolve));
+    return await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action });
+  } catch {
+    return null;
+  }
+}
 
 async function getToken() {
   const user = auth.currentUser;
@@ -21,10 +31,14 @@ async function request(path, options = {}) {
 
 export const api = {
   // Auth — Firebase handles credentials; these sync with the backend
-  register: () =>
-    request('/api/auth/register', { method: 'POST', body: JSON.stringify({}) }),
-  login: () =>
-    request('/api/auth/login', { method: 'POST', body: JSON.stringify({}) }),
+  register: async () => {
+    const recaptcha_token = await getRecaptchaToken('register');
+    return request('/api/auth/register', { method: 'POST', body: JSON.stringify({ recaptcha_token }) });
+  },
+  login: async () => {
+    const recaptcha_token = await getRecaptchaToken('login');
+    return request('/api/auth/login', { method: 'POST', body: JSON.stringify({ recaptcha_token }) });
+  },
   getProfile: () => request('/api/auth/profile'),
 
   // Jobs
