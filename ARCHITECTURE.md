@@ -19,6 +19,9 @@
 │  ┌────────────────────────┐ ┌────────────────────────────────┐  │
 │  │  Applications Tracker  │ │  Dashboard                     │  │
 │  └────────────────────────┘ └────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │  Landing Pages: Home, About, Services, Future Services  │  │
+│  └───────────────────────────────────────────────────────────┘  │
 └────────────────────────────┬────────────────────────────────────┘
                              │ REST API (JSON)
                              ▼
@@ -28,7 +31,7 @@
 │                                                                 │
 │  ┌──────────┐ ┌──────────┐ ┌───────────┐ ┌──────────────────┐  │
 │  │   Auth   │ │ Scraper  │ │  Matcher  │ │  Resume          │  │
-│  │  (JWT)   │ │ (Indeed) │ │  (Skills) │ │  Optimizer       │  │
+│  │(Firebase)│ │ (Indeed) │ │  (Skills) │ │  Optimizer       │  │
 │  └──────────┘ └──────────┘ └───────────┘ │  (Gemini API)    │  │
 │  ┌──────────┐ ┌──────────┐               └──────────────────┘  │
 │  │Interview │ │App       │ ┌──────────────────────────────────┐ │
@@ -41,7 +44,7 @@
 ┌────────────────────────────┐  ┌──────────────────────────────┐
 │       DATABASE             │  │    EXTERNAL APIs             │
 │  SQLite (dev)              │  │                              │
-│  PostgreSQL (prod)         │  │  Google Gemini API           │
+│  PostgreSQL (prod)         │  │  Google Gemini 2.5 Flash    │
 │                            │  │  Indeed (web scraping)       │
 │  Tables:                   │  │                              │
 │  - Users                   │  └──────────────────────────────┘
@@ -56,7 +59,7 @@
 
 | Module         | Responsibility                                           |
 |----------------|----------------------------------------------------------|
-| `auth`         | User registration, login, JWT token management           |
+| `auth`         | Firebase token verification, user sync via Admin SDK  |
 | `scraper`      | Web scraping job listings from Indeed                     |
 | `matcher`      | Skill extraction + resume-to-job compatibility scoring    |
 | `optimizer`    | AI-powered resume rewriting via Google Gemini             |
@@ -94,7 +97,7 @@ User pastes resume + job description
 Frontend → POST /api/resumes/optimize
         │
         ▼
-Backend sends prompt to Google Gemini API
+Backend sends prompt to Google Gemini 2.5 Flash
         │
         ▼
 Gemini returns optimized resume
@@ -126,7 +129,7 @@ Gemini evaluates answer → returns score + feedback
 Users
 ├── id (PK)
 ├── email (unique)
-├── password_hash
+├── firebase_uid (unique)
 ├── resume_text
 └── created_at
 

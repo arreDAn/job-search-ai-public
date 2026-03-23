@@ -4,16 +4,17 @@ A full-stack AI-powered platform that helps job seekers find relevant jobs, opti
 
 ## Live Demo
 
-> [https://job-search-ai.vercel.app](https://job-search-ai.vercel.app)
+> [https://job-search-ai-public.vercel.app](https://job-search-ai-public.vercel.app)
 
 ## Features
 
 - **Job Search & Scraping** — Scrape job listings from Indeed with keyword and location filters
 - **Resume-to-Job Matching** — Skill extraction engine that calculates a 0-100% compatibility score
-- **AI Resume Optimizer** — Rewrites your resume for a specific job using Google Gemini
+- **AI Resume Optimizer** — Rewrites your resume for a specific job using Google Gemini 2.5 Flash
 - **Interview Prep** — Generates interview questions from job descriptions and evaluates your answers with AI feedback
 - **Application Tracker** — Track job applications with status updates and notes
 - **Dashboard** — Aggregated metrics: match scores, interview history, resume versions
+- **Landing Pages** — Professional marketing pages: Home, About, Services, Future Services
 
 ## Tech Stack
 
@@ -21,7 +22,7 @@ A full-stack AI-powered platform that helps job seekers find relevant jobs, opti
 |-------------|-------------------------------------|
 | Frontend    | React 18, Vite, React Router v6     |
 | Backend     | Python, Flask, SQLAlchemy           |
-| AI          | Google Gemini API                   |
+| AI          | Google Gemini 2.5 Flash              |
 | Database    | SQLite (dev) / PostgreSQL (prod)    |
 | Auth        | Firebase Authentication              |
 | Deployment  | Vercel (frontend), Google Cloud Run (backend) |
@@ -40,10 +41,20 @@ See [API_SPEC.md](API_SPEC.md) for full endpoint documentation.
 frontend/
 ├── src/
 │   ├── api/              # API client layer
-│   ├── components/       # Shared components (Navbar, AuthContext, ProtectedRoute)
-│   ├── pages/            # Page components
+│   ├── components/       # Shared components
+│   │   ├── AuthContext.jsx
+│   │   ├── Navbar.jsx
+│   │   ├── LandingNavbar.jsx
+│   │   ├── ProtectedRoute.jsx
+│   │   └── WireframeMesh.jsx
+│   ├── pages/
+│   │   ├── HomePage.jsx
+│   │   ├── AboutPage.jsx
+│   │   ├── ServicesPage.jsx
+│   │   ├── FutureServicesPage.jsx
 │   │   ├── LoginPage.jsx
 │   │   ├── RegisterPage.jsx
+│   │   ├── ForgotPasswordPage.jsx
 │   │   ├── JobsPage.jsx
 │   │   ├── ResumePage.jsx
 │   │   ├── InterviewPage.jsx

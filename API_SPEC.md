@@ -1,8 +1,18 @@
 # API Specification
 
-Base URL: `https://api.yourdomain.com/api`
+**Base URL (production):** `https://job-search-ai-backend-141172818759.us-central1.run.app/api`  
+**Base URL (local dev):** `http://localhost:5000/api`
 
-All endpoints under `/api` prefix. Protected endpoints require `Authorization: Bearer <token>` header.
+All endpoints use the `/api` prefix.  
+Protected endpoints require a Firebase ID token in the `Authorization` header:
+
+```
+Authorization: Bearer <Firebase ID token>
+```
+
+The frontend obtains tokens automatically via `auth.currentUser.getIdToken()`. Tokens expire after ~1 hour; Firebase refreshes them transparently.
+
+> **reCAPTCHA v3:** The `/auth/register` and `/auth/login` endpoints also accept an optional `recaptcha_token` field in the request body, validated server-side when `RECAPTCHA_SECRET_KEY` is configured.
 
 ---
 
@@ -11,12 +21,14 @@ All endpoints under `/api` prefix. Protected endpoints require `Authorization: B
 ### Register
 ```
 POST /api/auth/register
+Authorization: Bearer <Firebase ID token>
 ```
-**Request:**
+Firebase creates the account on the client side before this call. This endpoint syncs the Firebase user to the local PostgreSQL database.
+
+**Request body:** _(optional)_
 ```json
 {
-  "email": "user@example.com",
-  "password": "securepassword"
+  "recaptcha_token": "..."
 }
 ```
 **Response (201):**
@@ -27,40 +39,46 @@ POST /api/auth/register
 }
 ```
 
+**Rate limit:** 5 per hour
+
 ---
 
 ### Login
 ```
 POST /api/auth/login
+Authorization: Bearer <Firebase ID token>
 ```
-**Request:**
+Verifies the Firebase token and returns the local user profile. Creates a local user if one does not exist yet.
+
+**Request body:** _(optional)_
 ```json
 {
-  "email": "user@example.com",
-  "password": "securepassword"
+  "recaptcha_token": "..."
 }
 ```
 **Response (200):**
 ```json
 {
-  "token": "eyJhbGciOi...",
-  "user_id": 1,
-  "email": "user@example.com"
+  "message": "Login successful",
+  "user_id": 1
 }
 ```
+
+**Rate limit:** 10 per hour
 
 ---
 
 ### Get Profile
 ```
 GET /api/auth/profile
-Authorization: Bearer <token>
+Authorization: Bearer <Firebase ID token>
 ```
 **Response (200):**
 ```json
 {
   "id": 1,
   "email": "user@example.com",
+  "resume_text": "...",
   "created_at": "2026-03-18T12:00:00"
 }
 ```
@@ -153,7 +171,7 @@ POST /api/jobs
 ### Match Resume to Job
 ```
 POST /api/jobs/match
-Authorization: Bearer <token>
+Authorization: Bearer <Firebase ID token>
 ```
 **Request (option 1 — by job description):**
 ```json
@@ -189,7 +207,7 @@ Authorization: Bearer <token>
 ### Optimize Resume
 ```
 POST /api/resumes/optimize
-Authorization: Bearer <token>
+Authorization: Bearer <Firebase ID token>
 ```
 **Request:**
 ```json
@@ -214,7 +232,7 @@ Authorization: Bearer <token>
 ### Generate Questions
 ```
 POST /api/interview/generate
-Authorization: Bearer <token>
+Authorization: Bearer <Firebase ID token>
 ```
 **Request:**
 ```json
@@ -243,7 +261,7 @@ Authorization: Bearer <token>
 ### Evaluate Answer
 ```
 POST /api/interview/evaluate
-Authorization: Bearer <token>
+Authorization: Bearer <Firebase ID token>
 ```
 **Request:**
 ```json
@@ -265,7 +283,7 @@ Authorization: Bearer <token>
 ### Interview History
 ```
 GET /api/interview/history
-Authorization: Bearer <token>
+Authorization: Bearer <Firebase ID token>
 ```
 **Response (200):**
 ```json
@@ -290,7 +308,7 @@ Authorization: Bearer <token>
 ### Track Application
 ```
 POST /api/applications
-Authorization: Bearer <token>
+Authorization: Bearer <Firebase ID token>
 ```
 **Request:**
 ```json
@@ -312,7 +330,7 @@ Authorization: Bearer <token>
 ### List Applications
 ```
 GET /api/applications
-Authorization: Bearer <token>
+Authorization: Bearer <Firebase ID token>
 ```
 **Response (200):**
 ```json
@@ -327,7 +345,7 @@ Authorization: Bearer <token>
 ### Update Application
 ```
 PATCH /api/applications/:id
-Authorization: Bearer <token>
+Authorization: Bearer <Firebase ID token>
 ```
 **Request:**
 ```json
@@ -350,7 +368,7 @@ Authorization: Bearer <token>
 ### Get Dashboard Data
 ```
 GET /api/dashboard
-Authorization: Bearer <token>
+Authorization: Bearer <Firebase ID token>
 ```
 **Response (200):**
 ```json
