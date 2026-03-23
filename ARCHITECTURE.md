@@ -171,8 +171,9 @@ Interviews
 
 ## Security
 
-- Passwords hashed with bcrypt
-- JWT tokens for API authentication
+- Firebase Authentication (email/password with email verification)
+- Firebase ID tokens verified server-side via Firebase Admin SDK
 - Backend source code kept private
 - API keys stored in environment variables (never in code)
 - CORS configured for frontend domain only
+- reCAPTCHA v3 on auth endpoints

@@ -23,7 +23,7 @@ A full-stack AI-powered platform that helps job seekers find relevant jobs, opti
 | Backend     | Python, Flask, SQLAlchemy           |
 | AI          | Google Gemini API                   |
 | Database    | SQLite (dev) / PostgreSQL (prod)    |
-| Auth        | JWT (JSON Web Tokens), bcrypt       |
+| Auth        | Firebase Authentication              |
 | Deployment  | Vercel (frontend), Google Cloud Run (backend) |
 
 ## Architecture
@@ -73,6 +73,12 @@ Create a `.env` file in the `frontend/` directory:
 
 ```env
 VITE_API_URL=http://127.0.0.1:5000
+VITE_FIREBASE_API_KEY=your-api-key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+VITE_FIREBASE_APP_ID=1:123456789:web:abcdef
 ```
 
 ## Screenshots
