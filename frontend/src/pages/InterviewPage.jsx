@@ -27,7 +27,11 @@ export default function InterviewPage() {
       const data = await api.generateQuestions(jobDescription, undefined, numQuestions);
       setQuestions(data.questions || []);
     } catch (err) {
-      setError(err.error || 'Failed to generate questions');
+      if (err.status === 429 && err.quota) {
+        setError(`Daily limit reached (${err.quota.used}/${err.quota.limit} interview sessions used). Limits reset at midnight UTC. Upgrade to Pro for more.`);
+      } else {
+        setError(err.error || 'Failed to generate questions');
+      }
     } finally {
       setGenerating(false);
     }
@@ -42,7 +46,11 @@ export default function InterviewPage() {
       const data = await api.evaluateAnswer(q.id, answer);
       setEvaluations((prev) => ({ ...prev, [q.id]: data }));
     } catch (err) {
-      setError(err.error || 'Failed to evaluate answer');
+      if (err.status === 429 && err.quota) {
+        setError(`Daily limit reached (${err.quota.used}/${err.quota.limit} answer evaluations used). Limits reset at midnight UTC. Upgrade to Pro for more.`);
+      } else {
+        setError(err.error || 'Failed to evaluate answer');
+      }
     } finally {
       setEvaluatingId(null);
     }

@@ -17,7 +17,11 @@ export default function ResumePage() {
       const data = await api.optimizeResume(resume, jobDescription);
       setResult(data);
     } catch (err) {
-      setError(err.error || 'Failed to optimize resume');
+      if (err.status === 429 && err.quota) {
+        setError(`Daily limit reached (${err.quota.used}/${err.quota.limit} resume optimizations used). Limits reset at midnight UTC. Upgrade to Pro for more.`);
+      } else {
+        setError(err.error || 'Failed to optimize resume');
+      }
     } finally {
       setLoading(false);
     }

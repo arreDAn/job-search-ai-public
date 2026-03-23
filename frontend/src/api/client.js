@@ -25,7 +25,7 @@ async function request(path, options = {}) {
 
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw { status: res.status, ...data };
+  if (!res.ok) throw { status: res.status, quota: data.quota, ...data };
   return data;
 }
 
@@ -93,4 +93,7 @@ export const api = {
 
   // Dashboard
   getDashboard: () => request('/api/dashboard'),
+
+  // Usage quota
+  getUsage: () => request('/api/usage'),
 };
