@@ -7,6 +7,7 @@ const publicLinks = [
   { to: '/about', label: 'About Us' },
   { to: '/services', label: 'Services' },
   { to: '/future', label: 'Future Services' },
+  { to: '/pricing', label: 'Pricing' },
 ];
 
 const appLinks = [
@@ -15,6 +16,7 @@ const appLinks = [
   { to: '/resume', label: 'Resume' },
   { to: '/interview', label: 'Interview' },
   { to: '/applications', label: 'Applications' },
+  { to: '/pricing', label: 'Pricing' },
 ];
 
 export default function Navbar() {

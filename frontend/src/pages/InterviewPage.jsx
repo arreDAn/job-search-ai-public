@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../api/client';
+import QuotaExceeded from '../components/QuotaExceeded';
 
 export default function InterviewPage() {
   const [jobDescription, setJobDescription] = useState('');
@@ -10,15 +11,17 @@ export default function InterviewPage() {
   const [generating, setGenerating] = useState(false);
   const [evaluatingId, setEvaluatingId] = useState(null);
   const [error, setError] = useState('');
+  const [quotaError, setQuotaError] = useState(null);
 
   // History
   const [history, setHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
 
-  const handleGenerate = async (e) => {
+    const handleGenerate = async (e) => {
     e.preventDefault();
     setError('');
+    setQuotaError(null);
     setQuestions([]);
     setAnswers({});
     setEvaluations({});
@@ -28,7 +31,7 @@ export default function InterviewPage() {
       setQuestions(data.questions || []);
     } catch (err) {
       if (err.status === 429 && err.quota) {
-        setError(`Daily limit reached (${err.quota.used}/${err.quota.limit} interview sessions used). Limits reset at midnight UTC. Upgrade to Pro for more.`);
+        setQuotaError(err.quota);
       } else {
         setError(err.error || 'Failed to generate questions');
       }
@@ -37,17 +40,18 @@ export default function InterviewPage() {
     }
   };
 
-  const handleEvaluate = async (q) => {
+    const handleEvaluate = async (q) => {
     const answer = answers[q.id];
     if (!answer?.trim()) return;
     setEvaluatingId(q.id);
     setError('');
+    setQuotaError(null);
     try {
       const data = await api.evaluateAnswer(q.id, answer);
       setEvaluations((prev) => ({ ...prev, [q.id]: data }));
     } catch (err) {
       if (err.status === 429 && err.quota) {
-        setError(`Daily limit reached (${err.quota.used}/${err.quota.limit} answer evaluations used). Limits reset at midnight UTC. Upgrade to Pro for more.`);
+        setQuotaError(err.quota);
       } else {
         setError(err.error || 'Failed to evaluate answer');
       }
@@ -84,6 +88,14 @@ export default function InterviewPage() {
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
+      {quotaError && (
+        <QuotaExceeded
+          action={quotaError.action || 'interview_generate'}
+          tier={quotaError.tier}
+          limit={quotaError.limit}
+          resetsAt={quotaError.resets_at}
+        />
+      )}
 
       {showHistory ? (
         <div className="interview-history">

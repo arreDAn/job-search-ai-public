@@ -14,8 +14,9 @@ import JobsPage from './pages/JobsPage';
 import ResumePage from './pages/ResumePage';
 import InterviewPage from './pages/InterviewPage';
 import ApplicationsPage from './pages/ApplicationsPage';
+import PricingPage from './pages/PricingPage';
 
-const landingRoutes = ['/', '/about', '/services', '/future'];
+const landingRoutes = ['/', '/about', '/services', '/future', '/pricing'];
 
 function AppShell() {
   const location = useLocation();
@@ -25,11 +26,12 @@ function AppShell() {
     <>
       <Navbar />
       {isLanding ? (
-        <Routes>
+                <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/future" element={<FutureServicesPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
         </Routes>
       ) : (
         <main className="main-content">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { api } from '../api/client';
+import QuotaExceeded from '../components/QuotaExceeded';
 
 export default function ResumePage() {
   const [resume, setResume] = useState('');
@@ -7,10 +8,12 @@ export default function ResumePage() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [quotaError, setQuotaError] = useState(null);
 
   const handleOptimize = async (e) => {
     e.preventDefault();
-    setError('');
+        setError('');
+    setQuotaError(null);
     setResult(null);
     setLoading(true);
     try {
@@ -18,7 +21,7 @@ export default function ResumePage() {
       setResult(data);
     } catch (err) {
       if (err.status === 429 && err.quota) {
-        setError(`Daily limit reached (${err.quota.used}/${err.quota.limit} resume optimizations used). Limits reset at midnight UTC. Upgrade to Pro for more.`);
+        setQuotaError(err.quota);
       } else {
         setError(err.error || 'Failed to optimize resume');
       }
@@ -85,6 +88,14 @@ export default function ResumePage() {
       </form>
 
       {error && <div className="alert alert-error">{error}</div>}
+      {quotaError && (
+        <QuotaExceeded
+          action="resume_optimize"
+          tier={quotaError.tier}
+          limit={quotaError.limit}
+          resetsAt={quotaError.resets_at}
+        />
+      )}
 
       {result && (
         <div className="card result-card">

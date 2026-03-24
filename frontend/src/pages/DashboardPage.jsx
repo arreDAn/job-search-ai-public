@@ -30,13 +30,20 @@ export default function DashboardPage() {
     <div className="page">
       <h1>Dashboard</h1>
 
-      {usage && (
+            {usage && (
         <div className="card" style={{ marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
             <h2 style={{ margin: 0 }}>Today's Usage</h2>
-            <span className="badge" style={{ background: 'var(--accent)', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.8rem', textTransform: 'capitalize' }}>
-              {usage.tier} tier
-            </span>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <span className="badge" style={{ background: 'var(--accent)', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.8rem', textTransform: 'capitalize' }}>
+                {usage.tier} tier
+              </span>
+              {usage.tier === 'free' && (
+                <a href="/pricing" className="btn btn-primary btn-sm">
+                  Upgrade
+                </a>
+              )}
+            </div>
           </div>
           <div className="stats-grid">
             {Object.entries(usage.usage).map(([action, info]) => {
@@ -57,9 +64,15 @@ export default function DashboardPage() {
               );
             })}
           </div>
-          <p style={{ fontSize: '0.8rem', color: '#888', marginTop: '0.5rem' }}>
+                    <p style={{ fontSize: '0.8rem', color: '#888', marginTop: '0.5rem' }}>
             Resets at midnight UTC
-            {usage.tier === 'free' && ' · Upgrade to Pro for higher limits'}
+            {usage.tier === 'free' && (
+              <>
+                {' · '}
+                <a href="/pricing" style={{ color: 'var(--primary)', textDecoration: 'underline' }}>Upgrade to Pro</a>
+                {' for higher limits'}
+              </>
+            )}
           </p>
         </div>
       )}

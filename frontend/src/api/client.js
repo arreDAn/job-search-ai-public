@@ -25,7 +25,11 @@ async function request(path, options = {}) {
 
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw { status: res.status, quota: data.quota, ...data };
+  if (!res.ok) {
+    const error = { status: res.status, quota: data.quota, ...data };
+    if (res.status === 429) error.isQuotaExceeded = true;
+    throw error;
+  }
   return data;
 }
 
