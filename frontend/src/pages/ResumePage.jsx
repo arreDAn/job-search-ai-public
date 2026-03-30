@@ -97,22 +97,141 @@ export default function ResumePage() {
         />
       )}
 
-      {result && (
-        <div className="card result-card">
-          <div className="result-header">
-            <h2>Optimized Resume</h2>
-            <div className="result-meta">
-              {result.score != null && (
-                <span className={`match-badge ${result.score >= 70 ? 'match-high' : result.score >= 40 ? 'match-mid' : 'match-low'}`}>
-                  Fit Score: {result.score}%
-                </span>
-              )}
+            {result && (
+        <div className="page" style={{ gap: '1.5rem' }}>
+
+          {/* Overall Score & Feedback */}
+          <div className="card">
+            <div className="result-header">
+              <h2>Analysis Results</h2>
+              <div className="result-meta">
+                {result.score != null && (
+                  <span className={`match-badge ${result.score >= 70 ? 'match-high' : result.score >= 40 ? 'match-mid' : 'match-low'}`}>
+                    Fit Score: {result.score}%
+                  </span>
+                )}
+              </div>
+            </div>
+            {result.overall_feedback && (
+              <p style={{ color: 'var(--text-muted)', marginTop: '0.75rem', lineHeight: 1.6 }}>
+                {result.overall_feedback}
+              </p>
+            )}
+          </div>
+
+          {/* Strengths */}
+          {result.strengths?.length > 0 && (
+            <div className="card">
+              <h3 style={{ marginBottom: '0.75rem', color: 'var(--success)' }}>✅ What You Do Well</h3>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingLeft: '1rem' }}>
+                {result.strengths.map((s, i) => (
+                  <li key={i} style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{s}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Missing Keywords */}
+          {result.missing_keywords?.length > 0 && (
+            <div className="card">
+              <h3 style={{ marginBottom: '0.75rem', color: 'var(--warning)' }}>⚠️ Missing Keywords</h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                {result.missing_keywords.map((kw, i) => (
+                  <span key={i} className="skill-tag skill-missing">{kw}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Section Breakdown */}
+          {result.sections?.length > 0 && (
+            <div className="card">
+              <h3 style={{ marginBottom: '1rem' }}>📋 Section-by-Section Breakdown</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {result.sections.map((section, i) => (
+                  <div key={i} style={{
+                    border: `1px solid ${
+                      section.status === 'good' ? 'rgba(34,197,94,0.3)'
+                      : section.status === 'critical' ? 'rgba(239,68,68,0.3)'
+                      : 'rgba(245,158,11,0.3)'
+                    }`,
+                    borderRadius: 'var(--radius)',
+                    padding: '1rem',
+                    background: section.status === 'good'
+                      ? 'rgba(34,197,94,0.05)'
+                      : section.status === 'critical'
+                      ? 'rgba(239,68,68,0.05)'
+                      : 'rgba(245,158,11,0.05)',
+                  }}>
+                    {/* Section Header */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                      <h4 style={{ fontWeight: 600 }}>{section.name}</h4>
+                      <span style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        padding: '0.2rem 0.6rem',
+                        borderRadius: '12px',
+                        background: section.status === 'good'
+                          ? 'rgba(34,197,94,0.15)'
+                          : section.status === 'critical'
+                          ? 'rgba(239,68,68,0.15)'
+                          : 'rgba(245,158,11,0.15)',
+                        color: section.status === 'good'
+                          ? 'var(--success)'
+                          : section.status === 'critical'
+                          ? 'var(--danger)'
+                          : 'var(--warning)',
+                      }}>
+                        {section.status === 'good' ? '✓ Good'
+                          : section.status === 'critical' ? '✗ Critical'
+                          : '⚠ Needs Work'}
+                      </span>
+                    </div>
+
+                    {/* Feedback */}
+                    {section.feedback && (
+                      <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem', lineHeight: 1.5 }}>
+                        {section.feedback}
+                      </p>
+                    )}
+
+                    {/* Issues */}
+                    {section.issues?.length > 0 && (
+                      <ul style={{ paddingLeft: '1rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                        {section.issues.map((issue, j) => (
+                          <li key={j} style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{issue}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Key Changes */}
+          {result.key_changes?.length > 0 && (
+            <div className="card">
+              <h3 style={{ marginBottom: '0.75rem' }}>🔧 Key Changes Made</h3>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingLeft: '1rem' }}>
+                {result.key_changes.map((change, i) => (
+                  <li key={i} style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{change}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Optimized Resume */}
+          <div className="card result-card">
+            <div className="result-header">
+              <h2>✨ Optimized Resume</h2>
               <button className="btn btn-sm btn-secondary" onClick={handleCopy}>
                 Copy to Clipboard
               </button>
             </div>
+            <pre className="resume-output">{result.optimized_resume}</pre>
           </div>
-          <pre className="resume-output">{result.optimized_resume}</pre>
+
         </div>
       )}
     </div>
